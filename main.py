@@ -2,17 +2,83 @@ from drafter import *
 from dataclasses import dataclass
 
 set_website_title("Dental Tooth Explorer")
-# TODO before deploying to GitHub: remove the # marks below and put your real name.
-# set_site_information(
-#     author="Your Name",
-#     description="A study site for learning the international (universal) tooth numbering system, "
-#                 "with a tooth finder, category pages, and a quiz.",
-#     sources=["Universal Numbering System for permanent teeth"],
-#     planning="CS1 Final Project design document",
-#     links=[],
-# )
+set_website_style("daub")
 
+add_website_css("""
+body {
+    background-color: #eef8f8;
+    color: #0b2545;
+}
 
+h1, h2, h3 {
+    color: #0b2545;
+}
+
+button,
+input[type="submit"],
+input[type="button"] {
+    background: #0b2545 !important;
+    background-image: none !important;
+    color: white !important;
+    border: 2px solid #14919b !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+    box-shadow: 0 2px 4px rgba(11, 37, 69, 0.25) !important;
+    cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    background: #14919b !important;
+    background-image: none !important;
+    border-color: #0b2545 !important;
+}
+body {
+    line-height: 1.6;
+}
+
+p, span {
+    font-size: 1.05rem;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 12px 0 16px 0;
+    background: white;
+    box-shadow: 0 2px 6px rgba(11, 37, 69, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 8px 18px;
+    text-align: left;
+    border-bottom: 1px solid #cfe3e6;
+}
+
+tr:first-child th,
+tr:first-child td {
+    background: #0b2545;
+    color: white;
+    font-weight: 600;
+}
+
+tr:nth-child(even) td {
+    background: #f2fafa;
+}
+
+tr:first-child:nth-child(even) td {
+    background: #0b2545;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #14919b;
+    margin: 20px 0;
+}""")
 # ---------------------------------------------------------------- Dataclasses
 
 @dataclass
@@ -93,6 +159,18 @@ def teeth_in_category(state: State, category: str):
             found.append(tooth)
     return found
 
+# --------------------------------------------------- style design
+@route
+def index() -> Page:
+    return Page([
+        Header("Dental Tooth Explorer"),
+        "Ordinary text, a link, and a form, in this theme.\n",
+        Link("A link", "index"),
+        "\nA field:",
+        TextBox("field", "typed text"),
+        "\n",
+        Button("A button", "index")
+    ])
 
 # ---------------------------------------------------------------- Home
 
@@ -156,11 +234,14 @@ def search_tooth(state: State, number: str) -> Page:
             state.tooth_number = tooth.number
             state.tooth_name = tooth.name
             results = [
-                Header("Results", 2),
-                Text("Tooth #" + str(tooth.number)),
-                Text("Name: " + tooth.name),
-                Text("Location: " + tooth.location),
-                Text("Type: " + tooth.category),
+                HorizontalRule(),
+                Header("Results for Tooth #" + str(tooth.number), 2),
+                Table([
+                    ["Detail", "Info"],
+                    ["Name", tooth.name],
+                    ["Location", tooth.location],
+                    ["Type", tooth.category],
+                ]),
             ]
         else:
             results = [Text("Error: that tooth could not be found.")]
@@ -179,8 +260,6 @@ def search_tooth(state: State, number: str) -> Page:
         LineBreak(),
         Button("Home", home),
     ])
-
-
 # ---------------------------------------------------------------- Quiz
 
 @route
@@ -279,19 +358,19 @@ def about_page(state: State) -> Page:
 
 
 def category_page(state: State, title: str, category: str, description: str) -> Page:
-    lines = []
+    rows = [["Tooth #", "Name", "Location"]]
     for tooth in teeth_in_category(state, category):
-        lines.append(Text("#" + str(tooth.number) + " - " + tooth.name + " (" + tooth.location + ")"))
+        rows.append([str(tooth.number), tooth.name, tooth.location])
     return Page(state, [
         Header(title, 1),
         Text(description),
-        Text("There are " + str(len(lines)) + " in the adult mouth:"),
-    ] + lines + [
-        LineBreak(),
+        HorizontalRule(),
+        Header("There are " + str(len(rows) - 1) + " in the adult mouth", 2),
+        Table(rows),
+        HorizontalRule(),
         Button("Back to About Teeth", about_page),
         Button("Home", home),
     ])
-
 
 @route
 def incisors_page(state: State) -> Page:
@@ -319,3 +398,4 @@ def molars_page(state: State) -> Page:
 
 
 start_server(State(0, "", 0, 0, "", build_teeth()))
+
