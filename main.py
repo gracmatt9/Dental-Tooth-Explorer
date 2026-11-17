@@ -6,79 +6,36 @@ set_website_style("daub")
 
 add_website_css("""
 body {
-    background-color: #eef8f8;
+    font-family: Georgia, "Times New Roman", serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #e6f4f4 0%, #f7fcfc 100%);
     color: #0b2545;
-}
-
-h1, h2, h3 {
-    color: #0b2545;
-}
-
-button,
-input[type="submit"],
-input[type="button"] {
-    background: #0b2545 !important;
-    background-image: none !important;
-    color: white !important;
-    border: 2px solid #14919b !important;
-    border-radius: 8px !important;
-    padding: 8px 18px !important;
-    font-weight: 600 !important;
-    text-shadow: none !important;
-    box-shadow: 0 2px 4px rgba(11, 37, 69, 0.25) !important;
-    cursor: pointer;
-}
-
-button:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover {
-    background: #14919b !important;
-    background-image: none !important;
-    border-color: #0b2545 !important;
-}
-body {
     line-height: 1.6;
 }
 
-p, span {
-    font-size: 1.05rem;
+h1, h2, h3 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    color: #0b2545;
 }
 
-table {
-    border-collapse: collapse;
-    margin: 12px 0 16px 0;
+h1 {
+    font-size: 2.6rem;
+    margin-bottom: 12px;
+}
+
+input[type="text"], select {
+    padding: 6px 10px;
+    border: 2px solid #14919b;
+    border-radius: 6px;
+    color: #0b2545;
     background: white;
-    box-shadow: 0 2px 6px rgba(11, 37, 69, 0.12);
-    border-radius: 8px;
-    overflow: hidden;
+    font-size: 1rem;
 }
-
-th, td {
-    padding: 8px 18px;
-    text-align: left;
-    border-bottom: 1px solid #cfe3e6;
-}
-
-tr:first-child th,
-tr:first-child td {
-    background: #0b2545;
-    color: white;
-    font-weight: 600;
-}
-
-tr:nth-child(even) td {
-    background: #f2fafa;
-}
-
-tr:first-child:nth-child(even) td {
-    background: #0b2545;
-}
-
-hr {
-    border: none;
-    border-top: 2px solid #14919b;
-    margin: 20px 0;
-}""")
+""")
+hide_debug_information()
 # ---------------------------------------------------------------- Dataclasses
 
 @dataclass
@@ -398,4 +355,3 @@ def molars_page(state: State) -> Page:
 
 
 start_server(State(0, "", 0, 0, "", build_teeth()))
-
