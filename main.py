@@ -1,24 +1,33 @@
 from drafter import *
 from dataclasses import dataclass
 
+# ---------------------------------------------------------------- Site setup
+# Theme must be set first, then custom CSS is layered on top of it.
 set_website_title("Dental Tooth Explorer")
 set_website_style("daub")
+hide_debug_information()
 
 add_website_css("""
+/* Background: #e6f4f4 (solid, overrides daub's own background) */
+html, body {
+    background: #e6f4f4 !important;
+    background-image: none !important;
+    color: #0b2545;
+}
+
 body {
     font-family: Georgia, "Times New Roman", serif;
     max-width: 900px;
     margin: 0 auto;
     padding: 24px 32px;
-    background: linear-gradient(135deg, #e6f4f4 0%, #f7fcfc 100%);
-    color: #0b2545;
     line-height: 1.6;
 }
 
-h1, h2, h3 {
+/* Header text: #0b2545 */
+h1, h2, h3, h4, h5, h6 {
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 700;
-    color: #0b2545;
+    color: #0b2545 !important;
 }
 
 h1 {
@@ -26,16 +35,45 @@ h1 {
     margin-bottom: 12px;
 }
 
+/* Interactive buttons: #0b2545 */
+button,
+input[type="submit"],
+input[type="button"],
+.btn {
+    background: #0b2545 !important;
+    background-color: #0b2545 !important;
+    color: #ffffff !important;
+    border: 2px solid #0b2545 !important;
+    border-radius: 6px;
+    padding: 8px 18px;
+    margin: 4px 6px 4px 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.btn:hover {
+    opacity: 0.85;
+}
+
 input[type="text"], select {
     padding: 6px 10px;
-    border: 2px solid #14919b;
+    border: 2px solid #0b2545;
     border-radius: 6px;
     color: #0b2545;
     background: white;
     font-size: 1rem;
 }
+
+a {
+    color: #0b2545;
+}
 """)
-hide_debug_information()
+
+
 # ---------------------------------------------------------------- Dataclasses
 
 @dataclass
@@ -116,18 +154,6 @@ def teeth_in_category(state: State, category: str):
             found.append(tooth)
     return found
 
-# --------------------------------------------------- style design
-@route
-def index() -> Page:
-    return Page([
-        Header("Dental Tooth Explorer"),
-        "Ordinary text, a link, and a form, in this theme.\n",
-        Link("A link", "index"),
-        "\nA field:",
-        TextBox("field", "typed text"),
-        "\n",
-        Button("A button", "index")
-    ])
 
 # ---------------------------------------------------------------- Home
 
@@ -210,13 +236,15 @@ def search_tooth(state: State, number: str) -> Page:
         Text("Lower (right to left):  " + lower),
         LineBreak(),
         Text("Enter a tooth number (1-32):"),
-        TextBox("number", cleaned if cleaned else ""),
+        TextBox("number", cleaned),
         Button("Search", search_tooth),
         LineBreak(),
     ] + results + [
         LineBreak(),
         Button("Home", home),
     ])
+
+
 # ---------------------------------------------------------------- Quiz
 
 @route
@@ -229,6 +257,10 @@ def start_quiz(state: State) -> Page:
 
 @route
 def quiz_page(state: State) -> Page:
+    # Guard: if the quiz is already finished, show results instead of crashing
+    if state.question_number >= len(QUIZ):
+        return quiz_results(state)
+
     number, kind = QUIZ[state.question_number]
     content = [
         Header("Tooth Number Quiz", 1),
@@ -255,6 +287,9 @@ def quiz_page(state: State) -> Page:
 
 @route
 def check_answer(state: State, answer: str) -> Page:
+    if state.question_number >= len(QUIZ):
+        return quiz_results(state)
+
     number, kind = QUIZ[state.question_number]
     tooth = find_tooth(state, number)
 
@@ -328,6 +363,7 @@ def category_page(state: State, title: str, category: str, description: str) -> 
         Button("Back to About Teeth", about_page),
         Button("Home", home),
     ])
+
 
 @route
 def incisors_page(state: State) -> Page:
