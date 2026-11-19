@@ -2,14 +2,14 @@ from drafter import *
 from dataclasses import dataclass
 
 # ---------------------------------------------------------------- Site setup
-
+# "daub" is a built-in theme in current versions of Drafter. It only works if
+# the deployed build uses a recent Drafter, so check your GitHub workflow.
+# set_website_style must run before start_server().
 set_website_title("Dental Tooth Explorer")
-set_website_style("none")
+set_website_style("daub")
 hide_debug_information()
 
 add_website_css("""
-@import url("https://cdn.jsdelivr.net/npm/daub-ui@latest/daub-classless.css");
-
 /* Background: #e6f4f4 (solid, overrides daub's own background) */
 html, body {
     background: #e6f4f4 !important;
@@ -393,4 +393,3 @@ def molars_page(state: State) -> Page:
 
 
 start_server(State(0, "", 0, 0, "", build_teeth()))
-
