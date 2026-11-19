@@ -2,12 +2,14 @@ from drafter import *
 from dataclasses import dataclass
 
 # ---------------------------------------------------------------- Site setup
-# Theme must be set first, then custom CSS is layered on top of it.
+
 set_website_title("Dental Tooth Explorer")
-set_website_style("daub")
+set_website_style("none")
 hide_debug_information()
 
 add_website_css("""
+@import url("https://cdn.jsdelivr.net/npm/daub-ui@latest/daub-classless.css");
+
 /* Background: #e6f4f4 (solid, overrides daub's own background) */
 html, body {
     background: #e6f4f4 !important;
@@ -391,3 +393,4 @@ def molars_page(state: State) -> Page:
 
 
 start_server(State(0, "", 0, 0, "", build_teeth()))
+
